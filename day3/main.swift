@@ -51,7 +51,7 @@ private func filterRatings(_ ratings: [String], underColumn columnIndex: Int, de
 }
 
 private func flipBitCharacter(_ character: Character) -> Character {
-    return character == "0" ? "1" : "0"
+    character == "0" ? "1" : "0"
 }
 
 private func getGammaRate(from report: [String]) -> UInt {
