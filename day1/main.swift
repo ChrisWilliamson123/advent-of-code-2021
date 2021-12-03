@@ -13,10 +13,4 @@ func main() throws {
     print(increases)
 }
 
-extension ArraySlice where Element == Int {
-    func sum() -> Int {
-        self.reduce(0, +)
-    }
-}
-
 try main()
