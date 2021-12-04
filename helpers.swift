@@ -29,6 +29,12 @@ extension ArraySlice where Element == Int {
     }
 }
 
+extension Array where Element == Int {
+    func sum() -> Int {
+        self.reduce(0, +)
+    }
+}
+
 // INT EXTENSIONS
 extension Int {
     init?(_ char: Character) {
