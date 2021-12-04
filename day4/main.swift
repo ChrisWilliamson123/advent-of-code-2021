@@ -43,7 +43,7 @@ class BingoGame {
     private func playNumber(_ numberToPlay: Int) {
         boards.forEach({ board in
             board.checkNumber(numberToPlay)
-            if board.hasWon() && !boardHasFinished(board) {
+            if board.hasWon && !boardHasFinished(board) {
                 winners.append(board)
             }
         })
@@ -56,10 +56,17 @@ class BingoGame {
 }
 
 class BingoBoard {
-    private var board: [[BoardPosition]]
-    private var unmarkedSum: Int {
-        board.flatMap({ $0 }).filter({ !$0.marked }).map({ $0.value }).sum()
-    }
+    private typealias Row = [BoardPosition]
+    private typealias Column = [BoardPosition]
+
+    private var board: [Row]
+
+    private var unmarkedSum: Int { board.flatMap({ $0 }).filter({ !$0.marked }).map({ $0.value }).sum() }
+    private var allRows: [Row] { (0..<board.count).map(getRow) }
+    private var allColumns: [Row] { (0..<board[0].count).map(getColumn) }
+    private var allRowsAndAllColumns: [[BoardPosition]] { allRows + allColumns }
+    
+    var hasWon: Bool { allRowsAndAllColumns.contains(where: isWinningCollection) }
 
     init(board: [[Int]]) {
         self.board = board.map({ boardRow in
@@ -77,27 +84,20 @@ class BingoBoard {
         }
     }
 
-    func hasWon() -> Bool {
-        // Check if any row has won
-        for i in (0..<board.count) {
-            let row = board[i]
-            if row.filter({ !$0.marked }).count == 0 {
-                return true
-            }
-        }
-
-        // Check if any column has won
-        for i in (0..<board[0].count) {
-            let column = (0..<board.count).map({ board[$0][i] })
-            if column.filter({ !$0.marked }).count == 0 {
-                return true
-            }
-        }
-        return false
-    }
-
     func calculateWinningScore(using winningNumber: Int) -> Int {
         winningNumber * unmarkedSum
+    }
+
+    private func getRow(_ rowIndex: Int) -> [BoardPosition] {
+        board[rowIndex]
+    }
+
+    private func isWinningCollection(_ boardPositions: [BoardPosition]) -> Bool {
+        boardPositions.first(where: { !$0.marked }) == nil
+    }
+
+    private func getColumn(_ columnIndex: Int) -> [BoardPosition] {
+        board.map({ $0[columnIndex] })
     }
 
     private struct BoardPosition {
