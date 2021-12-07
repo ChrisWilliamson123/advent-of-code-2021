@@ -8,11 +8,11 @@ func main() throws {
 
     let partOneBingoGame = BingoGame(numbersToDraw: numbersToDraw.reversed(), boards: buildBingoBoards(from: Array(input.suffix(from: 1))))
     partOneBingoGame.play()
-    print(partOneBingoGame.finalWinningScore)
+    print("Part 1: \(partOneBingoGame.finalWinningScore)")
 
     let partTwoBingoGame = BingoGame(numbersToDraw: numbersToDraw.reversed(), boards: buildBingoBoards(from: Array(input.suffix(from: 1))))
     partTwoBingoGame.playUntilEveryoneWins()
-    print(partTwoBingoGame.finalWinningScore)
+    print("Part 2: \(partTwoBingoGame.finalWinningScore)")
 }
 
 class BingoGame {

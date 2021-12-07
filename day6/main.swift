@@ -6,7 +6,8 @@ func main() throws {
     let initialFishAges: [Int] = fishAgesString[0].split(separator: ",").compactMap({ Int($0) })
 
     let fishGroup = FishGroup(initialFishSpawnTimes: initialFishAges)
-    print(fishGroup.getNumberOfFishInGroup(after: 256))
+    print("Part 1: \(fishGroup.getNumberOfFishInGroup(after: 80))")
+    print("Part 2: \(fishGroup.getNumberOfFishInGroup(after: 256))")
 }
 
 class FishGroup {

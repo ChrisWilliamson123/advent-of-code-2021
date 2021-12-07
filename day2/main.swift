@@ -1,14 +1,18 @@
 import Foundation
 
 func main() throws {
-    let input: [String] = try readInput()
+    let input: [String] = try readInput(fromTestFile: false)
 
     let instructions = buildInstructions(using: input)
 
     let submarine = Submarine()
-    submarine.executeMovementInstructions(instructions)
+    submarine.executeMovementInstructions(instructions, usingAim: false)
+    print("Part 1: \(submarine.positionProduct)")
 
-    print(submarine.positionProduct)
+    let submarine2 = Submarine()
+    submarine2.executeMovementInstructions(instructions, usingAim: true)
+
+    print("Part 2: \(submarine2.positionProduct)")
 }
 
 private func buildInstructions(using input: [String]) -> [Submarine.MovementInstruction] {
@@ -24,13 +28,18 @@ class Submarine {
 
     var positionProduct: Int { position.x * position.y }
 
-    func executeMovementInstructions(_ instructions: [MovementInstruction]) {
-        instructions.forEach(executeMovementInstruction)
+    func executeMovementInstructions(_ instructions: [MovementInstruction], usingAim: Bool) {
+        instructions.forEach({ executeMovementInstruction($0, usingAim: usingAim) })
     }
 
-    private func executeMovementInstruction(_ instruction: MovementInstruction) {
-        aim += (instruction.direction.aimModifier * instruction.amount)
-        if instruction.direction == .forward { adjustPosition(by: instruction.amount) }
+    private func executeMovementInstruction(_ instruction: MovementInstruction, usingAim: Bool) {
+        if usingAim {
+            aim += (instruction.direction.aimModifier * instruction.amount)
+            if instruction.direction == .forward { adjustPosition(by: instruction.amount) }
+        } else {
+            position = Position(x: position.x + (instruction.direction.positionModifier.x * instruction.amount),
+                                y: position.y + (instruction.direction.positionModifier.y * instruction.amount))
+        }
     }
 
     private func adjustPosition(by amount: Int) {
@@ -51,6 +60,14 @@ class Submarine {
                     case .down:    return 1
                     case .forward: return 0
                     case .up:      return -1
+                }
+            }
+
+            var positionModifier: Position {
+                switch self {
+                    case .down:    return Position(x: 0, y: 1)
+                    case .forward: return Position(x: 1, y: 0)
+                    case .up:      return Position(x: 0, y: -1)
                 }
             }
         }
