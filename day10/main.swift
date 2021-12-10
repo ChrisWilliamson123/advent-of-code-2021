@@ -32,10 +32,7 @@ func main() throws {
         }
 
         if stack.count > 0 && !isCorrupted {
-            closingsNeeded.append(stack.reversed().map({
-                let associatedCloser = getCloser(for: $0)
-                return associatedCloser
-            }))
+            closingsNeeded.append(stack.reversed().map({ getCloser(for: $0) }))
         }
     }
 
