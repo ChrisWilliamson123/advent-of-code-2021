@@ -25,17 +25,17 @@ struct HeightMap {
     func getBasinCoords(startingAt coordinate: Coordinate) -> Set<Coordinate> {
         var explored: Set<Coordinate> = []
 
-        func procedure(_ coord: Coordinate) {
+        func dfs(_ coord: Coordinate) {
             explored.insert(coord)
 
             let validAxialEdges = self.getAdjacents(for: coord).filter({ ($0.x == coord.x || $0.y == coord.y) && self.getHeight(for: $0) != 9 })
 
             for edge in validAxialEdges where !explored.contains(edge) {
-                procedure(edge)
+                dfs(edge)
             }
         }
 
-        procedure(coordinate)
+        dfs(coordinate)
 
         return explored
     }
