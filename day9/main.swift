@@ -28,7 +28,7 @@ struct HeightMap {
         func dfs(_ coord: Coordinate) {
             explored.insert(coord)
 
-            let validAxialEdges = self.getAdjacents(for: coord).filter({ ($0.x == coord.x || $0.y == coord.y) && self.getHeight(for: $0) != 9 })
+            let validAxialEdges = coord.getAdjacents(in: map).filter({ ($0.x == coord.x || $0.y == coord.y) && self.getHeight(for: $0) != 9 })
 
             for edge in validAxialEdges where !explored.contains(edge) {
                 dfs(edge)
@@ -44,7 +44,7 @@ struct HeightMap {
         var lowPoints: [Coordinate] = []
         for y in 0..<map.count {
             for x in 0..<map[y].count {
-                let coordinate = Coordinate(x: x, y: y)
+                let coordinate = Coordinate(x, y)
                 if isLowPoint(coordinate) {
                     lowPoints.append(coordinate)
                 }
@@ -59,7 +59,7 @@ struct HeightMap {
     }
 
     private func isLowPoint(_ coordinate: Coordinate) -> Bool  {
-        let adjacents = getAdjacents(for: coordinate)
+        let adjacents = coordinate.getAdjacents(in: map)
         let adjacentValues = adjacents.map({ getHeight(for: $0) })
         let coordinateValue = getHeight(for: coordinate)
 
@@ -72,30 +72,8 @@ struct HeightMap {
         return true
     }
 
-    private func getAdjacents(for origin: Coordinate) -> [Coordinate] {
-        origin.adjacents.filter({ adjacentCoord in
-            (adjacentCoord.x >= 0 && adjacentCoord.x < map[0].count) && (adjacentCoord.y >= 0 && adjacentCoord.y < map.count)
-        })
-    }
-
     private func getHeight(for coordinate: Coordinate) -> Int {
         map[coordinate.y][coordinate.x]
-    }
-}
-
-struct Coordinate: Hashable {
-    let x: Int
-    let y: Int
-
-    var adjacents: [Coordinate] {
-        var adjacents: [Coordinate] = []
-        for x in x-1...x+1 {
-            for y in y-1...y+1  {
-                if x == self.x && y == self.y { continue }
-                adjacents.append(Coordinate(x: x, y: y))
-            }
-        }
-        return adjacents
     }
 }
 

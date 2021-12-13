@@ -49,7 +49,7 @@ class Game {
             for f in flashableCoords {
                 flashedCoords.insert(f)
                 flashesPerformed += 1
-                let adjacents = f.adjacents.filter({ ($0.x >= 0 && $0.x < board[0].count) && ($0.y >= 0 && $0.y < board.count) })
+                let adjacents = f.getAdjacents(in: board)
                 for a in adjacents {
                     board[a.y][a.x] += 1
                 }
@@ -69,7 +69,7 @@ class Game {
         var flashableCoords: Set<Coordinate> = []
         for y in 0..<board.count {
             for x in 0..<board[y].count {
-                let coordinate = Coordinate(x: x, y: y)
+                let coordinate = Coordinate(x, y)
                 if board[y][x] > 9 && !flashed.contains(coordinate) {
                     flashableCoords.insert(coordinate)
                 }
@@ -77,22 +77,6 @@ class Game {
         }
 
         return flashableCoords
-    }
-}
-
-struct Coordinate: Hashable {
-    let x: Int
-    let y: Int
-
-    var adjacents: [Coordinate] {
-        var adjacents: [Coordinate] = []
-        for x in x-1...x+1 {
-            for y in y-1...y+1  {
-                if x == self.x && y == self.y { continue }
-                adjacents.append(Coordinate(x: x, y: y))
-            }
-        }
-        return adjacents
     }
 }
 
