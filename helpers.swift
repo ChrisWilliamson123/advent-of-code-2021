@@ -76,6 +76,7 @@ extension String {
     }
 }
 
+// REGEX
 struct Regex {
     private let regex: NSRegularExpression
 
@@ -105,6 +106,7 @@ struct Regex {
     }
 }
 
+// Coordinate
 struct Coordinate: Hashable {
     let x: Int
     let y: Int
