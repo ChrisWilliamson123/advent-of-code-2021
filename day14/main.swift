@@ -4,22 +4,20 @@ func main() throws {
     let isTestMode = CommandLine.arguments.contains("test")
     let input: [String] = try readInput(fromTestFile: isTestMode)
 
-    var insertionRules: [String: String] = [:]
+    var insertionRules: [String: Character] = [:]
     
     for line in (input[2..<input.count]) {
         let split = line.components(separatedBy: " -> ")
-        insertionRules[split[0]] = split[1]
+        insertionRules[split[0]] = split[1][0]
     }
-    print(insertionRules)
 
     var pairs: [String] = []
     for i in 0..<input[0].count - 1 {
         pairs.append(input[0][i] + input[0][i+1])
     }
 
-    typealias Memo = [String: String]
-    func getExtension(_ input: String, count: Int, memo: inout Memo) -> String {
-        print(count)
+    typealias Memo = [String: [Character: Int]]
+    func getExtension(_ input: String, count: Int, memo: inout Memo) -> [Character: Int] {
         assert(input.count == 2, "Incorrect input length, must be 2")
 
         if let memoResult = memo[input + "\(count)"] {
@@ -27,54 +25,58 @@ func main() throws {
         }
 
         guard let substitutionValue = insertionRules[input] else {
-            return input
+            return input.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 })
         }
 
         if count == 0 {
-            return input
+            return input.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 })
         }
 
         if count == 1 {
-            return input[0] + substitutionValue + input[1]
+            let toReduce: [Character] = [input[0], substitutionValue, input[1]]
+            return toReduce.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 })
         }
 
-        var result = String(input[0])
-
-        let pairs = [input[0] + substitutionValue, substitutionValue + input[1]]
-        let pairOneExt = getExtension(pairs[0], count: count - 1, memo: &memo)
-        let pairTwoExt = getExtension(pairs[1], count: count - 1, memo: &memo)
+        var result: [Character: Int] = [input[0]: 1]
+        let pairs = [String([input[0], substitutionValue]), String([substitutionValue, input[1]])]
+        var pairOneExt = getExtension(pairs[0], count: count - 1, memo: &memo)
+        var pairTwoExt = getExtension(pairs[1], count: count - 1, memo: &memo)
         
-        result += pairOneExt[1..<pairOneExt.count]
-        result += pairTwoExt[1..<pairTwoExt.count]
+        pairOneExt[pairs[0][0]]! -= 1
+        for (key, value) in pairOneExt {
+            result[key] = (result[key] ?? 0) + value
+        }
+
+        pairTwoExt[pairs[1][0]]! -= 1
+        for (key, value) in pairTwoExt {
+            result[key] = (result[key] ?? 0) + value
+        }
 
         memo[input + "\(count)"] = result
         return result
     }
 
-    let ticks = 40
-
-    var finalPolymer: String = ""
     var memo: Memo = [:]
-    for i in 0..<pairs.count {
-        let pair = pairs[i]
-        var ext = getExtension(pair, count: ticks, memo: &memo)
-        if i != 0 { ext.removeFirst() }
-        finalPolymer += ext
-        print(finalPolymer)
+
+    for tickAmount in [("Part 1:", 10), ("Part 2:", 40)] {
+        var counts: [Character: Int] = [:]
+        for i in 0..<pairs.count {
+            let pair = pairs[i]
+            let ext = getExtension(pair, count: tickAmount.1, memo: &memo)
+
+            if i != 0 {
+                counts[pair[0]]! -= 1
+            }
+
+            for (key, value) in ext {
+                counts[key] = (counts[key] ?? 0) + value
+            }
+        }
+
+        let mostCommon = counts.values.max()!
+        let leastCommon = counts.values.min()!
+        print(tickAmount.0, mostCommon - leastCommon)
     }
-
-    // print(finalPolymer)
-
-    // print(totalPolymer)
-
-    var charCounts: [Character: Int] = [:]
-    for c in finalPolymer {
-        charCounts[c] = (charCounts[c] ?? 0) + 1
-    }
-
-    let mostCommon = charCounts.values.max()!
-    let leastCommon = charCounts.values.min()!
-    print(mostCommon - leastCommon)
 }
 
 
