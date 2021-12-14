@@ -86,6 +86,10 @@ extension String {
         let end = index(start, offsetBy: range.upperBound - range.lowerBound)
         return String(self[start ..< end])
     }
+
+    var characterCounts: [Character: Int] {
+        reduce(into: [:], { $0[$1] = ($0[$1] ?? 0) + 1 })
+    }
 }
 
 struct Regex {

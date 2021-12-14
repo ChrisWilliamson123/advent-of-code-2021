@@ -22,7 +22,7 @@ func main() throws {
 
         if let memoResult = memo[input + "\(count)"] { return memoResult }
 
-        guard let substitutionValue = insertionRules[input], count > 0 else { return input.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 }) }
+        guard let substitutionValue = insertionRules[input], count > 0 else { return input.characterCounts }
 
         var result: [Character: Int] = [input[0]: 1]
         let pairs = [String([input[0], substitutionValue]), String([substitutionValue, input[1]])]
