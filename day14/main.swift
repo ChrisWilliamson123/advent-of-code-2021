@@ -20,22 +20,9 @@ func main() throws {
     func getExtension(_ input: String, count: Int, memo: inout Memo) -> [Character: Int] {
         assert(input.count == 2, "Incorrect input length, must be 2")
 
-        if let memoResult = memo[input + "\(count)"] {
-            return memoResult
-        }
+        if let memoResult = memo[input + "\(count)"] { return memoResult }
 
-        guard let substitutionValue = insertionRules[input] else {
-            return input.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 })
-        }
-
-        if count == 0 {
-            return input.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 })
-        }
-
-        if count == 1 {
-            let toReduce: [Character] = [input[0], substitutionValue, input[1]]
-            return toReduce.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 })
-        }
+        guard let substitutionValue = insertionRules[input], count > 0 else { return input.reduce(into: [Character: Int](), { $0[$1] = ($0[$1] ?? 0) + 1 }) }
 
         var result: [Character: Int] = [input[0]: 1]
         let pairs = [String([input[0], substitutionValue]), String([substitutionValue, input[1]])]
