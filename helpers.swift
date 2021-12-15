@@ -187,6 +187,10 @@ struct Coordinate: Hashable {
         return adjacents
     }
 
+    func getAxialAdjacents(in grid: [[Any]]) -> [Coordinate] {
+        [Coordinate(x-1, y), Coordinate(x+1, y), Coordinate(x, y-1), Coordinate(x, y+1)]
+    }
+
     func translate(along foldLine: FoldLine) -> Coordinate {
         let currentValue = foldLine.axis == .y ? y : x
         let difference = (currentValue - foldLine.location) * 2
